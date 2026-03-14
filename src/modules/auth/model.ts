@@ -7,6 +7,10 @@ export const AuthModel = {
     password: t.String(),
     retry_password: t.String(),
   }),
+  signInBody: t.Object({
+    email: t.String(),
+    password: t.String(),
+  }),
 } as const;
 
 export type AuthModel = {

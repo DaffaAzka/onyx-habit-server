@@ -24,4 +24,20 @@ export abstract class AuthService {
       message: "User created successfully!",
     };
   }
+
+  static async signIn({ email, password }: AuthModel["signInBody"]) {
+    const response = await auth.api.signInEmail({
+      body: {
+        email: email,
+        password: password,
+      },
+    });
+
+    return {
+      status: 200,
+      token: response.token,
+      user: response.user,
+      message: "User logged successfully!",
+    };
+  }
 }
