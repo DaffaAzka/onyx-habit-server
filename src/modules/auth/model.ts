@@ -1,4 +1,5 @@
 import { t, type UnwrapSchema } from "elysia";
+import { HabitLogPlainInputUpdate } from "../../generated/prismabox/HabitLog";
 
 export const AuthModel = {
   signUpBody: t.Object({

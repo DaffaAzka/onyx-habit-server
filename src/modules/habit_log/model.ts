@@ -1,10 +1,10 @@
 import { t, UnwrapSchema } from "elysia";
+import { HabitLogPlainInputUpdate } from "../../generated/prismabox/HabitLog";
 
 export const HabitLogModel = {
   createBody: t.Object({
-    userId: t.String(),
     habitId: t.String(),
-    date: t.Date(),
+    date: t.Optional(t.Date()),
     status: t.Enum({
       DONE: "DONE",
       SKIPPED: "SKIPPED",
@@ -13,7 +13,6 @@ export const HabitLogModel = {
     note: t.Optional(t.String()),
   }),
   updateBody: t.Object({
-    userId: t.String(),
     habitId: t.String(),
     date: t.Optional(t.Date()),
     status: t.Optional(
@@ -29,4 +28,3 @@ export const HabitLogModel = {
 
 export type CreateBody = UnwrapSchema<typeof HabitLogModel.createBody>;
 export type UpdateBody = UnwrapSchema<typeof HabitLogModel.updateBody>;
-
