@@ -104,4 +104,62 @@ export abstract class HabitService {
       });
     }
   }
+
+  static async getTodayLog({ userId }: { userId: string }) {
+    try {
+      const today = new Date();
+      const gte = new Date(
+        Date.UTC(
+          today.getUTCFullYear(),
+          today.getUTCMonth(),
+          today.getUTCDate(),
+          0,
+          0,
+          0,
+        ),
+      );
+      const lt = new Date(
+        Date.UTC(
+          today.getUTCFullYear(),
+          today.getUTCMonth(),
+          today.getUTCDate() + 1,
+          0,
+          0,
+          0,
+        ),
+      );
+
+      const response = await prisma.habit.findMany({
+        where: { userId, deletedAt: null },
+        include: {
+          _count: {
+            select: {
+              logs: {
+                where: {
+                  date: {
+                    gte,
+                    lt,
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const filtering = response.map(({ _count, ...habit }) => ({
+        ...habit,
+        isLog: _count.logs > 0,
+      }));
+
+      return status(200, {
+        data: filtering,
+        message: "Get today habit successfully",
+      });
+    } catch (error) {
+      throw status(400, {
+        error: error,
+      });
+    }
+  }
 }
