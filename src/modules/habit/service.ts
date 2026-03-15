@@ -5,14 +5,15 @@ import { CreateBody, UpdateBody } from "./model";
 export abstract class HabitService {
   static async getAll({ userId }: { userId: string }) {
     try {
-      const data = await prisma.habit.findMany({
+      const response = await prisma.habit.findMany({
         where: {
           userId,
+          deletedAt: null,
         },
       });
 
       return status(200, {
-        data: data,
+        data: response,
         message: "Get all habits successfully",
       });
     } catch (error) {
@@ -24,15 +25,18 @@ export abstract class HabitService {
 
   static async getById({ id, userId }: { id: string; userId: string }) {
     try {
-      const data = await prisma.habit.findMany({
+      const response = await prisma.habit.findFirst({
         where: {
           userId,
           id,
+          deletedAt: null,
         },
       });
 
+      if (!response) throw status(404, "Not Found");
+
       return status(200, {
-        data: data,
+        data: response,
         message: "Get specific habit successfully",
       });
     } catch (error) {
@@ -44,7 +48,7 @@ export abstract class HabitService {
 
   static async create({ userId, name }: CreateBody) {
     try {
-      const data = await prisma.habit.create({
+      const response = await prisma.habit.create({
         data: {
           name: name,
           userId: userId,
@@ -52,7 +56,7 @@ export abstract class HabitService {
       });
 
       return status(201, {
-        data: data,
+        data: response,
         message: "Habit created successfully",
       });
     } catch (error) {
@@ -64,7 +68,7 @@ export abstract class HabitService {
 
   static async update({ id, userId, name }: UpdateBody) {
     try {
-      const data = await prisma.habit.update({
+      const response = await prisma.habit.update({
         where: { id, userId },
         data: {
           name: name,
@@ -72,8 +76,27 @@ export abstract class HabitService {
       });
 
       return status(201, {
-        data: data,
+        data: response,
         message: "Habit updated successfully",
+      });
+    } catch (error) {
+      throw status(400, {
+        error: error,
+      });
+    }
+  }
+
+  static async delete({ id, userId }: { id: string; userId: string }) {
+    try {
+      const response = await prisma.habit.update({
+        where: { id, userId },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+      return status(200, {
+        data: response,
+        message: "Habit deleted successfully",
       });
     } catch (error) {
       throw status(400, {

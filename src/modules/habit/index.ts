@@ -34,4 +34,7 @@ export const habitRoute = new Elysia({
     {
       body: HabitPlainInputUpdate,
     },
-  );
+  )
+  .delete("/:id", async ({ user, params: { id } }) => {
+    return await HabitService.delete({ id: id, userId: user.id });
+  });
