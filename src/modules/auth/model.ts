@@ -13,6 +13,5 @@ export const AuthModel = {
   }),
 } as const;
 
-export type AuthModel = {
-  [k in keyof typeof AuthModel]: UnwrapSchema<(typeof AuthModel)[k]>;
-};
+export type SignUpBody = UnwrapSchema<typeof AuthModel.signUpBody>;
+export type SignInBody = UnwrapSchema<typeof AuthModel.signInBody>;

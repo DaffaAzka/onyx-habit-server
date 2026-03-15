@@ -1,13 +1,15 @@
 import openapi from "@elysiajs/openapi";
 import { Elysia } from "elysia";
-import { authPlugin } from "./modules/auth/plugin";
-import { auth } from "./modules/auth";
+import { authGuard, authPlugin } from "./modules/auth/plugin";
+import { authRoute } from "./modules/auth";
 
 const app = new Elysia()
   .use(openapi())
   .use(authPlugin)
-  .use(auth)
+  .use(authRoute)
   .get("/", () => "Hello Elysia")
+  .use(authGuard)
+  .get("/profile", ({ user }) => `Welcome back ${user.name}`)
   .listen(3000);
 
 console.log(

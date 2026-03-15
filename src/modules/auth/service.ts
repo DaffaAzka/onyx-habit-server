@@ -1,15 +1,13 @@
 import { status } from "elysia";
 import { auth } from "../../utils/auth";
-import type { AuthModel } from "./model";
+import type { SignInBody, SignUpBody } from "./model";
 
 export abstract class AuthService {
-  static async signUp({
-    email,
-    name,
-    retry_password,
-    password,
-  }: AuthModel["signUpBody"]) {
-    if (password !== retry_password) return status(400);
+  static async signUp({ email, name, retry_password, password }: SignUpBody) {
+    if (password !== retry_password) {
+      throw status(400, { error: "Passwords do not match" });
+    }
+
     await auth.api.signUpEmail({
       body: {
         name: name,
@@ -18,14 +16,16 @@ export abstract class AuthService {
       },
     });
 
-    return {
-      status: 201,
-      email: email,
+    return status(201, {
+      data: {
+        name: name,
+        email: email,
+      },
       message: "User created successfully!",
-    };
+    });
   }
 
-  static async signIn({ email, password }: AuthModel["signInBody"]) {
+  static async signIn({ email, password }: SignInBody) {
     const response = await auth.api.signInEmail({
       body: {
         email: email,
@@ -33,11 +33,12 @@ export abstract class AuthService {
       },
     });
 
-    return {
-      status: 200,
-      token: response.token,
-      user: response.user,
+    return status(200, {
       message: "User logged successfully!",
-    };
+      data: {
+        token: response.token,
+        user: response.user,
+      },
+    });
   }
 }

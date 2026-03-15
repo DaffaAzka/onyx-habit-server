@@ -8,6 +8,14 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+generator prismabox {
+  provider                     = "prismabox"
+  typeboxImportDependencyName  = "elysia"
+  typeboxImportVariableName    = "t"
+  inputModel                   = true         
+  output                       = "../src/generated/prismabox"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -22,6 +30,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  habit         Habit[]
 
   @@unique([email])
   @@map("user")
@@ -73,4 +82,39 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Habit {
+  id        String      @id             @default(cuid())
+  userId    String
+  name      String
+  createdAt DateTime    @default(now())
+  deletedAt DateTime?
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs      HabitLog[]
+
+  @@index([userId])
+  @@map("habit")
+}
+
+model HabitLog {
+  id        String      @id             @default(cuid())
+  habitId   String
+  date      DateTime    @db.Date
+  status    LogStatus
+  note      String?
+  createdAt DateTime    @default(now())
+  deletedAt DateTime?
+
+  habit     Habit       @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date]) 
+  @@map("habit_log")
+}
+
+enum LogStatus {
+  DONE
+  SKIPPED
+  MISSED
 }

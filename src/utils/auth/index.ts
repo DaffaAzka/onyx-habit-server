@@ -1,3 +1,4 @@
+import { bearer } from "better-auth/plugins/bearer";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -12,4 +13,5 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  plugins: [bearer()],
 });

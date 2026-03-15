@@ -1,25 +1,13 @@
 import { AuthModel } from "./model";
-import Elysia from "elysia";
+import Elysia, { t } from "elysia";
 import { AuthService } from "./service";
+import { authPlugin } from "./plugin";
 
-export const auth = new Elysia({ prefix: "/auth" })
-  .post(
-    "/sign-up",
-    async ({ body }) => {
-      const response = await AuthService.signUp(body);
-      return response;
-    },
-    {
-      body: AuthModel.signUpBody,
-    },
-  )
-  .post(
-    "/sign-in",
-    async ({ body }) => {
-      const response = await AuthService.signIn(body);
-      return response;
-    },
-    {
-      body: AuthModel.signInBody,
-    },
-  );
+export const authRoute = new Elysia({ prefix: "/auth" })
+  .use(authPlugin)
+  .post("/sign-up", async ({ body }) => await AuthService.signUp(body), {
+    body: AuthModel.signUpBody,
+  })
+  .post("/sign-in", async ({ body }) => await AuthService.signIn(body), {
+    body: AuthModel.signInBody,
+  });
