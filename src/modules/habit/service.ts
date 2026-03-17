@@ -1,6 +1,7 @@
 import { status } from "elysia";
 import { prisma } from "../../utils/db";
 import { CreateBody, UpdateBody } from "./model";
+import { getUTCDayRange } from "../../utils/date";
 
 export abstract class HabitService {
   static async getAll({ userId }: { userId: string }) {
@@ -107,27 +108,7 @@ export abstract class HabitService {
 
   static async getTodayLog({ userId }: { userId: string }) {
     try {
-      const today = new Date();
-      const gte = new Date(
-        Date.UTC(
-          today.getUTCFullYear(),
-          today.getUTCMonth(),
-          today.getUTCDate(),
-          0,
-          0,
-          0,
-        ),
-      );
-      const lt = new Date(
-        Date.UTC(
-          today.getUTCFullYear(),
-          today.getUTCMonth(),
-          today.getUTCDate() + 1,
-          0,
-          0,
-          0,
-        ),
-      );
+      const { gte, lt } = getUTCDayRange();
 
       const response = await prisma.habit.findMany({
         where: { userId, deletedAt: null },
@@ -157,6 +138,7 @@ export abstract class HabitService {
         message: "Get today habit successfully",
       });
     } catch (error) {
+      console.error(error); 
       throw status(400, {
         error: error,
       });

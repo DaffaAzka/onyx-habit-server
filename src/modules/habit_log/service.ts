@@ -1,6 +1,7 @@
 import { status as responseStatus } from "elysia";
 import { prisma } from "../../utils/db";
-import { CreateBody, UpdateBody } from "./model";
+import { CreateBody, CreateOrUpdateBody, UpdateBody } from "./model";
+import { getUTCDayRange } from "../../utils/date";
 
 export abstract class HabitLogService {
   static async getAll({ userId }: { userId: string }) {
@@ -84,7 +85,6 @@ export abstract class HabitLogService {
   static async create({
     note,
     habitId,
-    userId,
     status,
   }: CreateBody & {
     userId: string;
@@ -135,6 +135,45 @@ export abstract class HabitLogService {
         data: response,
         message: "Habit log updated successfully",
       });
+    } catch (error) {
+      throw responseStatus(400, {
+        error: error,
+      });
+    }
+  }
+
+  static async createOrUpdate({
+    note,
+    habitId,
+    userId,
+    status,
+  }: CreateOrUpdateBody & {
+    userId: string;
+  }) {
+    try {
+      const { gte } = getUTCDayRange();
+      const habitLog = await prisma.habitLog.findFirst({
+        where: {
+          date: gte,
+          habitId,
+          habit: { userId },
+        },
+      });
+
+      return habitLog ?
+          await this.update({
+            id: habitLog.id,
+            note: note,
+            habitId: habitId,
+            status: status,
+            userId: userId,
+          })
+        : await this.create({
+            note: note,
+            habitId: habitId,
+            status: status,
+            userId: userId,
+          });
     } catch (error) {
       throw responseStatus(400, {
         error: error,

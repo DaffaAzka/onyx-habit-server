@@ -25,22 +25,31 @@ export const habitLogRoute = new Elysia({
     async ({ user, params: { id } }) =>
       await HabitLogService.getById({ userId: user.id, id: id }),
   )
+  // .post(
+  //   "/",
+  //   async ({ user, body }) => {
+  //     return await HabitLogService.create({ userId: user.id, ...body });
+  //   },
+  //   {
+  //     body: HabitLogModel.createBody,
+  //   },
+  // )
+  // .patch(
+  //   "/:id",
+  //   async ({ user, body, params: { id } }) => {
+  //     return await HabitLogService.update({ id: id, userId: user.id, ...body });
+  //   },
+  //   {
+  //     body: HabitLogModel.updateBody,
+  //   },
+  // )
   .post(
     "/",
     async ({ user, body }) => {
-      return await HabitLogService.create({ userId: user.id, ...body });
+      return await HabitLogService.createOrUpdate({ userId: user.id, ...body });
     },
     {
-      body: HabitLogModel.createBody,
-    },
-  )
-  .patch(
-    "/:id",
-    async ({ user, body, params: { id } }) => {
-      return await HabitLogService.update({ id: id, userId: user.id, ...body });
-    },
-    {
-      body: HabitLogModel.updateBody,
+      body: HabitLogModel.createOrUpdateBody,
     },
   )
   .delete(
