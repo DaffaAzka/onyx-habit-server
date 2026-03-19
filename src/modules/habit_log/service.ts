@@ -83,9 +83,7 @@ export abstract class HabitLogService {
   }
 
   static async create({
-    note,
-    habitId,
-    status,
+    ...data
   }: CreateBody & {
     userId: string;
   }) {
@@ -93,9 +91,7 @@ export abstract class HabitLogService {
       const response = await prisma.habitLog.create({
         data: {
           date: new Date(),
-          habitId: habitId,
-          status: status,
-          note: note,
+          ...data,
         },
       });
       return responseStatus(201, {
@@ -110,11 +106,10 @@ export abstract class HabitLogService {
   }
 
   static async update({
-    note,
-    habitId,
     userId,
-    status,
     id,
+    habitId,
+    ...data
   }: UpdateBody & { id: string; userId: string }) {
     try {
       const response = await prisma.habitLog.update({
@@ -126,9 +121,8 @@ export abstract class HabitLogService {
           },
         },
         data: {
-          habitId: habitId,
-          status: status,
-          note: note,
+          habitId,
+          ...data,
         },
       });
       return responseStatus(200, {
@@ -143,10 +137,9 @@ export abstract class HabitLogService {
   }
 
   static async createOrUpdate({
-    note,
     habitId,
     userId,
-    status,
+    ...data
   }: CreateOrUpdateBody & {
     userId: string;
   }) {
@@ -163,16 +156,14 @@ export abstract class HabitLogService {
       return habitLog ?
           await this.update({
             id: habitLog.id,
-            note: note,
             habitId: habitId,
-            status: status,
             userId: userId,
+            ...data,
           })
         : await this.create({
-            note: note,
             habitId: habitId,
-            status: status,
             userId: userId,
+            ...data,
           });
     } catch (error) {
       throw responseStatus(400, {

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "habit" ADD COLUMN     "color" TEXT NOT NULL DEFAULT '#6957DF',
+ADD COLUMN     "icon" TEXT NOT NULL DEFAULT 'Flame';

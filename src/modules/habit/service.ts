@@ -47,12 +47,12 @@ export abstract class HabitService {
     }
   }
 
-  static async create({ userId, name }: CreateBody) {
+  static async create({ userId, ...data }: CreateBody) {
     try {
       const response = await prisma.habit.create({
         data: {
-          name: name,
-          userId: userId,
+          ...data,
+          userId,
         },
       });
 
@@ -67,13 +67,11 @@ export abstract class HabitService {
     }
   }
 
-  static async update({ id, userId, name }: UpdateBody) {
+  static async update({ userId, id, ...data }: UpdateBody) {
     try {
       const response = await prisma.habit.update({
         where: { id, userId },
-        data: {
-          name: name,
-        },
+        data,
       });
 
       return status(201, {
@@ -138,7 +136,7 @@ export abstract class HabitService {
         message: "Get today habit successfully",
       });
     } catch (error) {
-      console.error(error); 
+      console.error(error);
       throw status(400, {
         error: error,
       });

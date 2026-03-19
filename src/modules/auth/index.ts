@@ -1,7 +1,7 @@
 import { AuthModel } from "./model";
 import Elysia, { t } from "elysia";
 import { AuthService } from "./service";
-import { authPlugin } from "./plugin";
+import { authGuard, authPlugin } from "./plugin";
 
 export const authRoute = new Elysia({ prefix: "/auth" })
   .use(authPlugin)
@@ -10,4 +10,6 @@ export const authRoute = new Elysia({ prefix: "/auth" })
   })
   .post("/sign-in", async ({ body }) => await AuthService.signIn(body), {
     body: AuthModel.signInBody,
-  });
+  })
+  .use(authGuard)
+  .get("/check", async () => await AuthService.check());

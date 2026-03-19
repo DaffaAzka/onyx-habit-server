@@ -9,6 +9,8 @@ export const HabitPlain = t.Object(
     id: t.String(),
     userId: t.String(),
     name: t.String(),
+    icon: t.String(),
+    color: t.String(),
     createdAt: t.Date(),
     deletedAt: __nullable__(t.Date()),
   },
@@ -52,13 +54,20 @@ export const HabitRelations = t.Object(
 );
 
 export const HabitPlainInputCreate = t.Object(
-  { name: t.String(), deletedAt: t.Optional(__nullable__(t.Date())) },
+  {
+    name: t.String(),
+    icon: t.Optional(t.String()),
+    color: t.Optional(t.String()),
+    deletedAt: t.Optional(__nullable__(t.Date())),
+  },
   { additionalProperties: false },
 );
 
 export const HabitPlainInputUpdate = t.Object(
   {
     name: t.Optional(t.String()),
+    icon: t.Optional(t.String()),
+    color: t.Optional(t.String()),
     deletedAt: t.Optional(__nullable__(t.Date())),
   },
   { additionalProperties: false },
@@ -152,6 +161,8 @@ export const HabitWhere = t.Partial(
           id: t.String(),
           userId: t.String(),
           name: t.String(),
+          icon: t.String(),
+          color: t.String(),
           createdAt: t.Date(),
           deletedAt: t.Date(),
         },
@@ -192,6 +203,8 @@ export const HabitWhereUnique = t.Recursive(
               id: t.String(),
               userId: t.String(),
               name: t.String(),
+              icon: t.String(),
+              color: t.String(),
               createdAt: t.Date(),
               deletedAt: t.Date(),
             },
@@ -210,6 +223,8 @@ export const HabitSelect = t.Partial(
       id: t.Boolean(),
       userId: t.Boolean(),
       name: t.Boolean(),
+      icon: t.Boolean(),
+      color: t.Boolean(),
       createdAt: t.Boolean(),
       deletedAt: t.Boolean(),
       user: t.Boolean(),
@@ -237,6 +252,12 @@ export const HabitOrderBy = t.Partial(
         additionalProperties: false,
       }),
       name: t.Union([t.Literal("asc"), t.Literal("desc")], {
+        additionalProperties: false,
+      }),
+      icon: t.Union([t.Literal("asc"), t.Literal("desc")], {
+        additionalProperties: false,
+      }),
+      color: t.Union([t.Literal("asc"), t.Literal("desc")], {
         additionalProperties: false,
       }),
       createdAt: t.Union([t.Literal("asc"), t.Literal("desc")], {

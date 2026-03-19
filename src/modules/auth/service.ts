@@ -41,4 +41,10 @@ export abstract class AuthService {
       },
     });
   }
+
+  static async check() {
+    return status(200, {
+      message: "Verification of the token was completed.",
+    });
+  }
 }

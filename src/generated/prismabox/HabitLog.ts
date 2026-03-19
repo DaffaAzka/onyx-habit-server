@@ -27,6 +27,8 @@ export const HabitLogRelations = t.Object(
         id: t.String(),
         userId: t.String(),
         name: t.String(),
+        icon: t.String(),
+        color: t.String(),
         createdAt: t.Date(),
         deletedAt: __nullable__(t.Date()),
       },

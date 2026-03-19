@@ -88,6 +88,8 @@ model Habit {
   id        String      @id             @default(cuid())
   userId    String
   name      String
+  icon      String      @default("Flame")
+  color     String      @default("#6957DF")
   createdAt DateTime    @default(now())
   deletedAt DateTime?
 
