@@ -83,25 +83,36 @@ export abstract class HabitLogService {
   }
 
   static async create({
-    ...data
-  }: CreateBody & {
-    userId: string;
-  }) {
+    habitId,
+    status,
+    note,
+    userId,
+  }: CreateBody & { userId: string }) {
     try {
+      const today = new Date();
+      const dateOnly = new Date(
+        Date.UTC(
+          today.getUTCFullYear(),
+          today.getUTCMonth(),
+          today.getUTCDate(),
+        ),
+      );
+
       const response = await prisma.habitLog.create({
         data: {
-          date: new Date(),
-          ...data,
+          habitId,
+          status,
+          note,
+          date: dateOnly,
         },
       });
+
       return responseStatus(201, {
         data: response,
         message: "Habit log created successfully",
       });
     } catch (error) {
-      throw responseStatus(400, {
-        error: error,
-      });
+      throw responseStatus(400, { error });
     }
   }
 
@@ -144,10 +155,10 @@ export abstract class HabitLogService {
     userId: string;
   }) {
     try {
-      const { gte } = getUTCDayRange();
+      const { gte, lt } = getUTCDayRange();
       const habitLog = await prisma.habitLog.findFirst({
         where: {
-          date: gte,
+          date: { gte, lt },
           habitId,
           habit: { userId },
         },

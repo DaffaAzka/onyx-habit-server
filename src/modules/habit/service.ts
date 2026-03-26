@@ -119,6 +119,7 @@ export abstract class HabitService {
                     gte,
                     lt,
                   },
+                  status: "DONE"
                 },
               },
             },
