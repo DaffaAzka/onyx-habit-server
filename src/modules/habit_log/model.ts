@@ -4,7 +4,7 @@ import { HabitLogPlainInputUpdate } from "../../generated/prismabox/HabitLog";
 export const HabitLogModel = {
   createBody: t.Object({
     habitId: t.String(),
-    date: t.Optional(t.Date()),
+    date: t.String(),
     status: t.Enum({
       DONE: "DONE",
       SKIPPED: "SKIPPED",
@@ -14,7 +14,7 @@ export const HabitLogModel = {
   }),
   updateBody: t.Object({
     habitId: t.String(),
-    date: t.Optional(t.Date()),
+    date: t.Optional(t.String()),
     status: t.Optional(
       t.Enum({
         DONE: "DONE",
@@ -26,12 +26,12 @@ export const HabitLogModel = {
   }),
   createOrUpdateBody: t.Object({
     habitId: t.String(),
-    date: t.Optional(t.Date()),
+    date: t.Optional(t.String()),
     status: t.Enum({
-        DONE: "DONE",
-        SKIPPED: "SKIPPED",
-        MISSED: "MISSED",
-      }),
+      DONE: "DONE",
+      SKIPPED: "SKIPPED",
+      MISSED: "MISSED",
+    }),
     note: t.Optional(t.String()),
   }),
 };

@@ -104,9 +104,11 @@ export abstract class HabitService {
     }
   }
 
-  static async getTodayLog({ userId }: { userId: string }) {
+  static async getTodayLog({ userId, date }: { userId: string; date: string }) {
     try {
-      const { gte, lt } = getUTCDayRange();
+      const { gte, lt } = getUTCDayRange(new Date(date ?? ""));
+      console.log(new Date(date ?? ""));
+
 
       const response = await prisma.habit.findMany({
         where: { userId, deletedAt: null },
@@ -119,7 +121,7 @@ export abstract class HabitService {
                     gte,
                     lt,
                   },
-                  status: "DONE"
+                  status: "DONE",
                 },
               },
             },

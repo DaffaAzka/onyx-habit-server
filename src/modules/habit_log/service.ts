@@ -27,18 +27,8 @@ export abstract class HabitLogService {
         },
       });
 
-      const grouped = response.reduce(
-        (acc, log) => {
-          const date = log.date.toISOString().split("T")[0];
-          if (!acc[date]) acc[date] = [];
-          acc[date].push(log);
-          return acc;
-        },
-        {} as Record<string, typeof response>,
-      );
-
       return responseStatus(200, {
-        data: grouped,
+        data: response,
         message: "",
       });
     } catch (error) {
@@ -86,24 +76,16 @@ export abstract class HabitLogService {
     habitId,
     status,
     note,
+    date,
     userId,
   }: CreateBody & { userId: string }) {
     try {
-      const today = new Date();
-      const dateOnly = new Date(
-        Date.UTC(
-          today.getUTCFullYear(),
-          today.getUTCMonth(),
-          today.getUTCDate(),
-        ),
-      );
-
       const response = await prisma.habitLog.create({
         data: {
           habitId,
           status,
           note,
-          date: dateOnly,
+          date: new Date(date),
         },
       });
 
@@ -155,7 +137,8 @@ export abstract class HabitLogService {
     userId: string;
   }) {
     try {
-      const { gte, lt } = getUTCDayRange();
+      const { gte, lt } = getUTCDayRange(new Date(data.date ?? ""));
+
       const habitLog = await prisma.habitLog.findFirst({
         where: {
           date: { gte, lt },
@@ -164,17 +147,20 @@ export abstract class HabitLogService {
         },
       });
 
+      const { date, ...rest } = data;
+
       return habitLog ?
           await this.update({
             id: habitLog.id,
             habitId: habitId,
             userId: userId,
-            ...data,
+            ...rest,
           })
         : await this.create({
             habitId: habitId,
             userId: userId,
-            ...data,
+            date: date ?? gte.toISOString().split("T")[0],
+            ...rest,
           });
     } catch (error) {
       throw responseStatus(400, {

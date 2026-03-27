@@ -13,8 +13,9 @@ export const habitRoute = new Elysia({
   .use(authGuard)
   .get("/", async ({ user }) => await HabitService.getAll({ userId: user.id }))
   .get(
-    "/today",
-    async ({ user }) => await HabitService.getTodayLog({ userId: user.id }),
+    "/list/:date",
+    async ({ user, params: { date } }) =>
+      await HabitService.getTodayLog({ userId: user.id, date }),
   )
   .get(
     "/:id",
